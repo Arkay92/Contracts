@@ -13,17 +13,11 @@ contract SpectralAnalysis is ERC721A, Ownable {
 
     uint256 currentTokenID = totalSupply();
 
-    struct XRFData {
-        string element;
-        string atomicNumber;
-        string intensity;
-    }
-
     struct Painting {
         address owner;
         string name;
         uint256 cost;
-        XRFData xrfSignature;
+        string[][] xrf;
     }
 
     string private baseURI;
@@ -56,16 +50,18 @@ contract SpectralAnalysis is ERC721A, Ownable {
         address intendedOwner, 
         string calldata pieceName,
         uint256 cost,
-        string[] calldata xrfData
+        string[][] memory xrfData
     ) external payable callerIsUser onlyOwner {
         _mint(msg.sender, 1);
-
-        XRFData memory xrf;
-
-        xrf.element = xrfData[0]; 
-        xrf.atomicNumber = xrfData[1]; 
-        xrf.intensity = xrfData[3]; 
         
+        string [][] memory xrf = paintings[currentTokenID].xrf;
+
+        for(uint256 i = 0; i < xrfData.length; ++i) {
+            xrf[i][0] = xrfData[i][0]; 
+            xrf[i][1] = xrfData[i][1]; 
+            xrf[i][2] = xrfData[i][2]; 
+        }
+
         paintings[currentTokenID] = Painting(
             intendedOwner, 
             pieceName, 
@@ -77,19 +73,28 @@ contract SpectralAnalysis is ERC721A, Ownable {
     // ====== Send Token ID and XRF Data to Verify =======
     function verifyPiece(
         uint256 tokenID, 
-        string[] memory xrfData
+        string[][] memory xrfData
     ) public view callerIsUser onlyOwner returns(bool) {
-        return (
-            keccak256(bytes(paintings[tokenID].xrfSignature.element)) == keccak256(bytes(xrfData[0])) &&
-            keccak256(bytes(paintings[tokenID].xrfSignature.atomicNumber)) == keccak256(bytes(xrfData[1])) &&
-            keccak256(bytes(paintings[tokenID].xrfSignature.intensity)) == keccak256(bytes(xrfData[2]))
-        );
+        bool isMatch = false;
+
+        for(uint256 i = 0; i < xrfData.length; ++i) {
+            string [][] storage xrf = paintings[tokenID].xrf;
+
+            if(
+                keccak256(bytes(xrf[i][0])) == keccak256(bytes(xrfData[i][0])) &&
+                keccak256(bytes(xrf[i][1])) == keccak256(bytes(xrfData[i][1])) &&
+                keccak256(bytes(xrf[i][2])) == keccak256(bytes(xrfData[i][2])) 
+            ) {
+                isMatch = true;
+            }
+        }
+        return isMatch;
     } 
 
     // ====== Sell Painting ===========
     function sellPainting(
         uint256 tokenID,
-        string[] calldata xrfData,
+        string[][] memory xrfData,
         address recipient
     ) public callerIsUser {
         address owner = ERC721A.ownerOf(tokenID);
