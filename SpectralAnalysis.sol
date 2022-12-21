@@ -75,22 +75,28 @@ contract SpectralAnalysis is ERC721A, Ownable {
         uint256 tokenID, 
         string[][] memory xrfData
     ) public view callerIsUser onlyOwner returns(bool) {
-        bool isMatch = false;
+        uint256 matches = 0;
+        uint256 misses = 0;
 
         for(uint256 i = 0; i < xrfData.length; ++i) {
             string [][] storage xrf = paintings[tokenID].xrf;
 
-            if(
+            bool isMatch = (
                 keccak256(bytes(xrf[i][0])) == keccak256(bytes(xrfData[i][0])) &&
                 keccak256(bytes(xrf[i][1])) == keccak256(bytes(xrfData[i][1])) &&
                 keccak256(bytes(xrf[i][2])) == keccak256(bytes(xrfData[i][2])) 
-            ) {
-                isMatch = true;
-            } else {
-                isMatch = false;
+            );
+
+            unchecked {
+                if(!isMatch) {
+                    ++matches;
+                } else {
+                    ++misses;
+                }
             }
         }
-        return isMatch;
+        
+        return misses == 0;
     } 
 
     // ====== Sell Painting ===========
