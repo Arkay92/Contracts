@@ -86,6 +86,8 @@ contract SpectralAnalysis is ERC721A, Ownable {
                 keccak256(bytes(xrf[i][2])) == keccak256(bytes(xrfData[i][2])) 
             ) {
                 isMatch = true;
+            } else {
+                isMatch = false;
             }
         }
         return isMatch;
