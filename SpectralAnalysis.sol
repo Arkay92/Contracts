@@ -88,7 +88,7 @@ contract SpectralAnalysis is ERC721A, Ownable {
             );
 
             unchecked {
-                if(!isMatch) {
+                if(isMatch) {
                     ++matches;
                 } else {
                     ++misses;
