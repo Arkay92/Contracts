@@ -100,12 +100,12 @@ contract SoftwareLicense is ERC721A, Ownable, ReentrancyGuard {
 		if(keccak256(abi.encodePacked(status)) == keccak256(abi.encodePacked("Trial"))) tokenData[tokenID].subscriptionLength = trialLength;
 	}
 
-	// Function to let license holders buy subscriptions from their trial tokens
-	function buyLicense() external payable {
-	    require(msg.value >= licenceCost, "[Error] Please send the correct amount of ETH for the license cost");
-	    tokenData[tokenHoldings[msg.sender]].status = "Paid";
-	    tokenData[tokenHoldings[msg.sender]].subscriptionLength = 365 days;
-	}
+ 	// Function to let license holders buy subscriptions from their trial tokens
+    	function buyLicense() external payable nonReentrant {
+		require(msg.value >= licenceCost, "[Error] Please send the correct amount of ETH for the license cost");
+		tokenData[tokenHoldings[msg.sender]].status = "Paid";
+		tokenData[tokenHoldings[msg.sender]].subscriptionLength = 365 days;
+    	}
 
 	// Allow owner to toggle mint status of trials
 	function toggleMintStatus() external onlyOwner {
