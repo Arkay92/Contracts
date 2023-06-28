@@ -44,7 +44,7 @@ contract DigitalID is ERC721A, Ownable {
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public payable override {
-        require(isSoulbound(from, tokenId), "Token is not soulbound");
+        require(!isSoulbound(from, tokenId), "Token is soulbound");
         require(from == owner() || from == address(this), "Only owner or contract can transfer soulbound token");
         super.transferFrom(from, to, tokenId);
         _soulboundTokens[from][tokenId] = false;
