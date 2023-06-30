@@ -13,7 +13,7 @@ contract BankReserve is ERC721A, Ownable {
         uint256 dateOfIntake;
     }
 
-    mapping(uint256 => BullionData) private bullionData;
+    mapping(uint256 => BullionData) public bullionData;
     uint256[] private allBullionIds;
     LiquidityPool private liquidityPool;
 
@@ -32,13 +32,13 @@ contract BankReserve is ERC721A, Ownable {
         _mint(_to, _tokenId);
         bullionData[_tokenId] = BullionData(_assetId, _purity, _weight, _dateOfIntake);
         allBullionIds.push(_tokenId);
-        liquidityPool.depositGold(_weight); // Deposit the weight of the bullion into the liquidity pool
+        liquidityPool.depositNFT(_tokenId); // Deposit the weight of the bullion into the liquidity pool
     }
 
     function burnBullionNFT(uint256 _tokenId) external onlyOwner {
         require(_exists(_tokenId), "BullionNFT: Token ID does not exist");
+        liquidityPool.withdrawNFT(_tokenId); // Withdraw the weight of the burnt bullion from the liquidity pool
         _burn(_tokenId);
-        BullionData memory data = bullionData[_tokenId];
         delete bullionData[_tokenId];
         uint256[] storage allBullion = allBullionIds;
         for (uint256 i = 0; i < allBullion.length; i++) {
@@ -48,7 +48,6 @@ contract BankReserve is ERC721A, Ownable {
                 break;
             }
         }
-        liquidityPool.withdrawGold(data.weight); // Withdraw the weight of the burnt bullion from the liquidity pool
     }
 
     function getAllBullion() external view returns (uint256[] memory) {
