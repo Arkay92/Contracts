@@ -3,16 +3,15 @@ pragma solidity ^0.8.8;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./LiquidityPool.sol";
 
-contract CBDCToken is ERC20Pausable {
-    address public immutable owner;
+contract CBDCToken is ERC20Pausable, Ownable {
     uint8 public constant DECIMALS = 18;
     LiquidityPool public liquidityPool;
 
     constructor(address _liquidityPool) ERC20("CBDC Token", "CBDC") {
-        owner = msg.sender;
         liquidityPool = LiquidityPool(_liquidityPool);
     }
 
@@ -33,7 +32,7 @@ contract CBDCToken is ERC20Pausable {
     }
 
     function burn(uint256 _amount) public onlyOwner {
-        _burn(owner, _amount);
+        _burn(owner(), _amount);
     }
 
     function getExchangeRate() public view returns (uint256) {
@@ -49,10 +48,5 @@ contract CBDCToken is ERC20Pausable {
     function transferFrom(address _sender, address _recipient, uint256 _amount) public override returns (bool) {
         uint256 exchangedAmount = _amount * getExchangeRate();
         return super.transferFrom(_sender, _recipient, exchangedAmount);
-    }
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Not owner");
-        _;
     }
 }
