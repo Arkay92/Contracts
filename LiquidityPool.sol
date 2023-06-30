@@ -2,9 +2,10 @@
 pragma solidity ^0.8.8;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-contract LiquidityPool is Ownable {
+contract LiquidityPool is Ownable, ReentrancyGuard {
     AggregatorV3Interface public goldOracle;
     AggregatorV3Interface public silverOracle;
     AggregatorV3Interface public copperOracle;
@@ -30,23 +31,23 @@ contract LiquidityPool is Ownable {
         return uint256(price);
     }
 
-    function depositGold(uint256 _amount) external onlyOwner {
+    function depositGold(uint256 _amount) external onlyOwner nonReentrant {
         require(_amount > 0, "Invalid amount");
         goldReserve += _amount;
     }
 
-    function depositSilver(uint256 _amount) external onlyOwner {
+    function depositSilver(uint256 _amount) external onlyOwner nonReentrant {
         require(_amount > 0, "Invalid amount");
         silverReserve += _amount;
     }
 
-    function withdrawGold(uint256 _amount) external onlyOwner {
+    function withdrawGold(uint256 _amount) external onlyOwner nonReentrant {
         require(_amount > 0, "Invalid amount");
         require(_amount <= goldReserve, "Insufficient gold reserves");
         goldReserve -= _amount;
     }
 
-    function withdrawSilver(uint256 _amount) external onlyOwner {
+    function withdrawSilver(uint256 _amount) external onlyOwner nonReentrant {
         require(_amount > 0, "Invalid amount");
         require(_amount <= silverReserve, "Insufficient silver reserves");
         silverReserve -= _amount;
