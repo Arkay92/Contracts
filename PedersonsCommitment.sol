@@ -14,6 +14,7 @@ contract PedersonsCommitment {
     }
 
     function verifyDuplicate(uint256[] memory indices, bytes32[] memory proof) public view returns (bool) {
+        require(indices.length == proof.length, "Mismatched array lengths");
         require(indices.length > 0, "Indices array is empty");
         require(proof.length > 0, "Proof array is empty");
         
