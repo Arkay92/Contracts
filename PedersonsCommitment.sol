@@ -32,12 +32,8 @@ contract PedersonsCommitment {
             } else {
                 root = keccak256(abi.encodePacked(proofElement, root));
             }
-            
-            if (commitmentValue != proofElement) {
-                return false; // Invalid proof
-            }
         }
         
-        return root == proof[proof.length - 1];
+        return root == commitmentValue; // Compare the computed root with the provided commitment value
     }
 }
