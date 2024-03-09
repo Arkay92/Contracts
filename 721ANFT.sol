@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "ERC721A/ERC721A.sol";
 
-contract BlastSnipers is ERC721A, Ownable, ReentrancyGuard {
+contract MYNft is ERC721A, Ownable, ReentrancyGuard {
     using Strings for uint256;
     using MerkleProof for bytes32[];
     using EnumerableMap for EnumerableMap.AddressToUintMap;
