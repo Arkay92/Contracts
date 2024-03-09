@@ -3,7 +3,6 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
@@ -12,7 +11,6 @@ import "ERC721A/ERC721A.sol";
 contract MYNft is ERC721A, Ownable, ReentrancyGuard {
     using Strings for uint256;
     using MerkleProof for bytes32[];
-    using EnumerableMap for EnumerableMap.AddressToUintMap;
 
     enum MintState {
         Stopped,
