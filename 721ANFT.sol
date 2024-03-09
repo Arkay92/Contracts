@@ -15,8 +15,7 @@ contract MYNft is ERC721A, Ownable, ReentrancyGuard {
     enum MintState {
         Stopped,
         Public,
-        Private,
-        OG
+        Private
     }
 
     uint256 private immutable MAX_SUPPLY = 4500;
